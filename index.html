@@ -1,0 +1,1824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Interview Mastery — Kid Stories + Senior DE Answers</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lexend:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --s1: #111118;
+  --s2: #18181f;
+  --s3: #1f1f28;
+  --border: rgba(255,255,255,0.06);
+  --text: #e2e2ef;
+  --muted: #5a5a75;
+  --dim: #8888a8;
+
+  /* concept colors */
+  --map-c:    #ff7043;
+  --iter-c:   #26c6da;
+  --gen-c:    #ab47bc;
+  --comp-c:   #66bb6a;
+  --zip-c:    #ffa726;
+  --enum-c:   #ef5350;
+  --filter-c: #42a5f5;
+  --reduce-c: #ec407a;
+  --dec-c:    #8d6e63;
+  --arg-c:    #26a69a;
+  --r: 18px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Lexend', sans-serif;
+  overflow-x: hidden;
+}
+
+/* noise texture overlay */
+body::after {
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:0;
+  opacity:.4;
+}
+
+.page {
+  max-width: 1020px;
+  margin: 0 auto;
+  padding: 0 22px 120px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ═══ HERO ═══ */
+.hero {
+  padding: 70px 0 60px;
+  text-align: center;
+  position: relative;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 600px; height: 300px;
+  background: radial-gradient(ellipse at center, rgba(255,112,67,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,112,67,0.1);
+  border: 1px solid rgba(255,112,67,0.25);
+  color: var(--map-c);
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border-radius: 100px;
+  margin-bottom: 24px;
+}
+.hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3rem, 8vw, 6rem);
+  letter-spacing: 2px;
+  line-height: 1;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #ff7043 0%, #ffa726 35%, #26c6da 65%, #ab47bc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero p {
+  color: var(--dim);
+  font-size: 1rem;
+  font-weight: 300;
+  max-width: 480px;
+  margin: 0 auto 36px;
+  line-height: 1.7;
+}
+.concept-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+.pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .68rem;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .2s;
+  text-decoration: none;
+  display: inline-block;
+}
+.pill:hover { transform: translateY(-2px); filter: brightness(1.3); }
+
+/* ═══ SECTION DIVIDER ═══ */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 60px 0 24px;
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: opacity .5s ease, transform .5s ease;
+}
+.divider.vis { opacity:1; transform:translateX(0); }
+.div-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3.5rem;
+  line-height: 1;
+  opacity: .15;
+  flex-shrink: 0;
+}
+.div-content { flex: 1; }
+.div-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.9rem;
+  letter-spacing: 1.5px;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+.div-sub {
+  font-size: .75rem;
+  color: var(--muted);
+  font-weight: 400;
+  letter-spacing: 1px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.div-line { flex: 1; height: 1px; background: var(--border); }
+
+/* ═══ CONCEPT CARD ═══ */
+.concept-card {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-bottom: 20px;
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .5s ease, transform .5s ease, border-color .3s;
+}
+.concept-card.vis { opacity:1; transform:translateY(0); }
+.concept-card:hover { border-color: rgba(255,255,255,0.1); }
+
+.card-accent-bar {
+  height: 3px;
+  width: 100%;
+}
+.card-body { padding: 26px 28px; }
+
+/* ═══ KID STORY ═══ */
+.kid-story {
+  display: flex;
+  gap: 14px;
+  background: var(--s2);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+  border-left: 3px solid;
+  align-items: flex-start;
+}
+.kid-emoji { font-size: 1.7rem; flex-shrink: 0; line-height: 1.2; }
+.kid-text { font-size: .9rem; color: #c0c0dc; line-height: 1.75; }
+.kid-text strong { color: white; }
+
+/* ═══ TWO COLUMN ═══ */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 16px 0;
+}
+@media(max-width:640px){ .two-col{grid-template-columns:1fr;} }
+
+/* ═══ CODE BLOCK ═══ */
+.code {
+  background: #06060a;
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 16px 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .75rem;
+  line-height: 1.9;
+  overflow-x: auto;
+  margin: 12px 0;
+}
+.kw  { color: #c792ea; }
+.fn  { color: #82aaff; }
+.str { color: #c3e88d; }
+.nm  { color: #f78c6c; }
+.cm  { color: #3d3d52; font-style: italic; }
+.op  { color: #89ddff; }
+.hl  { background: rgba(255,255,255,0.04); display:inline-block; width:100%; border-radius:3px; }
+.hl2 { background: rgba(255,112,67,0.08);  display:inline-block; width:100%; border-radius:3px; }
+.hl3 { background: rgba(38,198,218,0.08);  display:inline-block; width:100%; border-radius:3px; }
+
+/* ═══ SENIOR ANSWER BOX ═══ */
+.senior-box {
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-top: 18px;
+  position: relative;
+  overflow: hidden;
+}
+.senior-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.02), transparent);
+  pointer-events: none;
+}
+.senior-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.senior-label .badge {
+  background: rgba(255,255,255,0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: .6rem;
+}
+.senior-quote {
+  font-size: .88rem;
+  line-height: 1.8;
+  color: #b8b8d8;
+  font-style: italic;
+}
+.senior-quote strong { color: white; font-style: normal; }
+.senior-quote em { font-style: normal; }
+
+/* ═══ VISUAL PIPELINE ═══ */
+.pipeline-wrap {
+  background: #06060a;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px;
+  margin: 14px 0;
+  overflow-x: auto;
+}
+.pipeline {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  min-width: 480px;
+}
+.pnode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.pnode-box {
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .7rem;
+  font-weight: 700;
+  text-align: center;
+  min-width: 80px;
+  border: 1px solid;
+  transition: all .25s;
+  cursor: default;
+  line-height: 1.4;
+}
+.pnode-box:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,.5); }
+.pnode-sub { font-size: .6rem; color: var(--muted); text-align: center; max-width: 85px; font-family: 'JetBrains Mono', monospace; }
+.parrow { color: var(--muted); font-size: 1.2rem; padding: 0 8px; margin-bottom: 18px; flex-shrink: 0; }
+
+/* ═══ MEMORY BARS ═══ */
+.mem-visual {
+  background: #06060a;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin: 14px 0;
+}
+.mem-row { margin-bottom: 14px; }
+.mem-header { display:flex; justify-content:space-between; font-size:.75rem; margin-bottom:6px; color:#b0b0cc; }
+.mem-header code { font-family:'JetBrains Mono',monospace; font-size:.7rem; }
+.mem-track { background: rgba(255,255,255,0.04); border-radius: 6px; height: 20px; overflow: hidden; }
+.mem-fill {
+  height: 100%;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem;
+  font-weight: 700;
+  color: var(--bg);
+  transition: width 1.5s cubic-bezier(.16,1,.3,1);
+  white-space: nowrap;
+}
+.fill-bad  { background: linear-gradient(90deg, #ef5350, #ff8a65); }
+.fill-good { background: linear-gradient(90deg, #26c6da, #66bb6a); }
+.fill-tiny { background: linear-gradient(90deg, #ab47bc, #7e57c2); }
+
+/* ═══ COMPARISON TABLE ═══ */
+.cmp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .8rem;
+  margin: 14px 0;
+}
+.cmp-table th {
+  padding: 10px 14px;
+  background: var(--s2);
+  font-weight: 700;
+  font-size: .7rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--border);
+  text-align: left;
+}
+.cmp-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  color: #b8b8d8;
+  vertical-align: middle;
+}
+.cmp-table td:first-child { color: var(--dim); font-family: 'JetBrains Mono', monospace; font-size: .72rem; }
+.cmp-table tr:hover td { background: rgba(255,255,255,0.015); }
+.yes { color: #66bb6a; font-weight: 700; }
+.no  { color: #ef5350; font-weight: 700; }
+.mono { font-family: 'JetBrains Mono', monospace; font-size: .72rem; color: white; }
+
+/* ═══ INTERACTIVE DEMO ═══ */
+.demo-panel {
+  background: var(--s2);
+  border-radius: 12px;
+  padding: 18px;
+  margin: 14px 0;
+}
+.demo-panel h4 {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 14px;
+}
+.demo-io {
+  display: grid;
+  grid-template-columns: 1fr 60px 1fr;
+  gap: 10px;
+  align-items: start;
+  margin-bottom: 14px;
+}
+@media(max-width:560px){ .demo-io{grid-template-columns:1fr;} }
+.demo-box {
+  background: #06060a;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  min-height: 72px;
+}
+.demo-box-lbl {
+  font-size: .6rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.demo-mid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 22px;
+  gap: 4px;
+}
+.fn-chip {
+  background: rgba(255,112,67,0.15);
+  border: 1px solid rgba(255,112,67,0.35);
+  color: var(--map-c);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-align: center;
+}
+.token-row { display: flex; flex-wrap: wrap; gap: 5px; }
+.tok {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .68rem;
+  padding: 3px 9px;
+  border-radius: 5px;
+  border: 1px solid;
+  transition: all .3s;
+}
+.tok-in  { background: rgba(255,167,38,0.08); border-color: rgba(255,167,38,0.3); color: #ffa726; }
+.tok-out { background: rgba(102,187,106,0.08); border-color: rgba(102,187,106,0.3); color: #66bb6a; }
+.tok-zip { background: rgba(38,198,218,0.08); border-color: rgba(38,198,218,0.3); color: #26c6da; }
+.tok.pop { animation: pop .35s ease; }
+@keyframes pop { 0%{transform:scale(0.7);opacity:0;} 70%{transform:scale(1.12);} 100%{transform:scale(1);opacity:1;} }
+
+.btn-row { display:flex; flex-wrap:wrap; gap:8px; }
+.btn {
+  padding: 7px 16px;
+  border-radius: 8px;
+  border: 1px solid;
+  font-family: 'Lexend', sans-serif;
+  font-weight: 600;
+  font-size: .75rem;
+  cursor: pointer;
+  transition: all .2s;
+  background: transparent;
+}
+.btn:hover { transform: translateY(-2px); filter: brightness(1.3); }
+
+/* ═══ ITERATOR VISUALIZER ═══ */
+.iter-track {
+  background: #06060a;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 14px 0;
+}
+.iter-items {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.iter-item {
+  width: 42px; height: 42px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .78rem;
+  font-weight: 700;
+  border: 2px solid;
+  transition: all .4s;
+  cursor: default;
+  position: relative;
+}
+.iter-item.waiting  { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08); color: var(--muted); }
+.iter-item.current  { background: rgba(38,198,218,0.2); border-color: var(--iter-c); color: var(--iter-c); box-shadow: 0 0 12px rgba(38,198,218,0.3); animation: pulse-iter 1s infinite; }
+.iter-item.consumed { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.04); color: rgba(255,255,255,0.15); }
+.iter-item .check { position:absolute; top:-6px; right:-6px; font-size:.6rem; }
+@keyframes pulse-iter { 0%,100%{box-shadow: 0 0 8px rgba(38,198,218,0.3);} 50%{box-shadow: 0 0 20px rgba(38,198,218,0.6);} }
+.iter-status {
+  font-size: .78rem;
+  color: var(--dim);
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 12px;
+}
+.iter-status span { color: var(--iter-c); font-weight: 700; }
+
+/* ═══ GENERATOR TAPE ═══ */
+.gen-tape {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  padding: 14px 16px;
+  background: #06060a;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+.tape-item {
+  width: 36px; height: 36px;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .72rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: 1px solid;
+  transition: all .5s;
+}
+.tape-item.hidden { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.06); color: transparent; }
+.tape-item.revealed { background: rgba(171,71,188,0.15); border-color: rgba(171,71,188,0.5); color: #ab47bc; }
+.tape-dots { color: var(--muted); font-size: 1.2rem; padding: 0 4px; flex-shrink: 0; }
+
+/* ═══ ZIP VISUAL ═══ */
+.zip-visual {
+  background: #06060a;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin: 14px 0;
+}
+.zip-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.zip-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .7rem;
+  color: var(--dim);
+  width: 60px;
+  flex-shrink: 0;
+}
+.zip-items { display:flex; gap:5px; flex: 1; }
+.zip-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .72rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid;
+  flex: 1;
+  text-align: center;
+  min-width: 0;
+}
+.zip-divider { border-top: 1px dashed rgba(255,255,255,0.08); margin: 10px 0; }
+.zip-result .zip-item { border-radius: 8px; }
+
+/* ═══ ENUMERATE BOX ═══ */
+.enum-rows { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
+.enum-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .75rem;
+}
+.enum-idx {
+  background: rgba(239,83,80,0.12);
+  border: 1px solid rgba(239,83,80,0.3);
+  color: #ef5350;
+  padding: 4px 10px;
+  border-radius: 6px;
+  min-width: 36px;
+  text-align: center;
+  font-weight: 700;
+}
+.enum-sep { color: var(--muted); }
+.enum-val {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  color: #e2e2ef;
+  padding: 4px 12px;
+  border-radius: 6px;
+  flex: 1;
+}
+
+/* ═══ DECORATOR LAYERS ═══ */
+.dec-layers {
+  position: relative;
+  margin: 16px 0;
+}
+.dec-layer {
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 6px;
+  border: 1px solid;
+  font-size: .8rem;
+  transition: all .3s;
+  cursor: default;
+  position: relative;
+}
+.dec-layer:hover { transform: translateX(4px); }
+.dec-layer-label {
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.dec-layer-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .75rem;
+  color: white;
+}
+.layer-outer { background: rgba(141,110,99,0.08); border-color: rgba(141,110,99,0.3); }
+.layer-mid   { background: rgba(255,167,38,0.06); border-color: rgba(255,167,38,0.25); margin-left: 20px; }
+.layer-inner { background: rgba(102,187,106,0.06); border-color: rgba(102,187,106,0.25); margin-left: 40px; }
+.layer-arrow { text-align: center; color: var(--muted); font-size: .8rem; margin: 3px 0; }
+
+/* ═══ ARGS KWARGS ═══ */
+.args-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 14px 0;
+}
+@media(max-width:560px){ .args-grid{grid-template-columns:1fr;} }
+.args-card {
+  background: var(--s2);
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid var(--border);
+}
+.args-card h4 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .85rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.args-card p { font-size: .82rem; color: var(--dim); line-height: 1.6; }
+.args-card p strong { color: #c0c0dc; }
+
+/* ═══ TAGS ═══ */
+.tag {
+  display: inline-block;
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-right: 6px;
+  margin-bottom: 6px;
+}
+
+/* ═══ SCROLL REVEAL ═══ */
+.reveal { opacity:0; transform:translateY(30px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.vis { opacity:1; transform:translateY(0); }
+
+/* ═══ NAV DOTS ═══ */
+.nav-dots {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 100;
+}
+.nav-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  cursor: pointer;
+  transition: all .2s;
+  border: none;
+}
+.nav-dot:hover, .nav-dot.active { background: white; transform: scale(1.3); }
+@media(max-width:800px){ .nav-dots{display:none;} }
+
+/* ═══ QUICK REF ═══ */
+.quick-ref {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.qr-item {
+  background: var(--s2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  transition: all .25s;
+}
+.qr-item:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.1); }
+.qr-top {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .8rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.qr-desc { font-size: .75rem; color: var(--dim); line-height: 1.5; }
+.qr-syntax {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem;
+  margin-top: 8px;
+  padding: 5px 8px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 5px;
+  color: #a0a0c0;
+}
+
+</style>
+</head>
+<body>
+
+<!-- NAV DOTS -->
+<nav class="nav-dots" id="navDots"></nav>
+
+<div class="page">
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<div class="hero">
+  <div class="hero-eyebrow">8 Years DE Experience · Python Interview Prep</div>
+  <h1>Python Interview<br>Mastery Guide</h1>
+  <p>Every core concept explained like you're 5 — with the senior DE answer ready for your interview</p>
+  <div class="concept-pills">
+    <a href="#s-map"    class="pill" style="background:rgba(255,112,67,.1);border:1px solid rgba(255,112,67,.3);color:#ff7043">map()</a>
+    <a href="#s-iter"   class="pill" style="background:rgba(38,198,218,.1);border:1px solid rgba(38,198,218,.3);color:#26c6da">iterator</a>
+    <a href="#s-gen"    class="pill" style="background:rgba(171,71,188,.1);border:1px solid rgba(171,71,188,.3);color:#ab47bc">generator</a>
+    <a href="#s-comp"   class="pill" style="background:rgba(102,187,106,.1);border:1px solid rgba(102,187,106,.3);color:#66bb6a">comprehension</a>
+    <a href="#s-zip"    class="pill" style="background:rgba(255,167,38,.1);border:1px solid rgba(255,167,38,.3);color:#ffa726">zip()</a>
+    <a href="#s-enum"   class="pill" style="background:rgba(239,83,80,.1);border:1px solid rgba(239,83,80,.3);color:#ef5350">enumerate()</a>
+    <a href="#s-filter" class="pill" style="background:rgba(66,165,245,.1);border:1px solid rgba(66,165,245,.3);color:#42a5f5">filter()</a>
+    <a href="#s-reduce" class="pill" style="background:rgba(236,64,122,.1);border:1px solid rgba(236,64,122,.3);color:#ec407a">reduce()</a>
+    <a href="#s-dec"    class="pill" style="background:rgba(141,110,99,.1);border:1px solid rgba(141,110,99,.3);color:#8d6e63">decorator</a>
+    <a href="#s-args"   class="pill" style="background:rgba(38,166,154,.1);border:1px solid rgba(38,166,154,.3);color:#26a69a">*args/**kwargs</a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     1. MAP()
+══════════════════════════════════════════════ -->
+<div class="divider reveal" id="s-map" data-label="map()">
+  <div class="div-num" style="color:var(--map-c)">01</div>
+  <div class="div-content">
+    <div class="div-title" style="color:var(--map-c)">map()</div>
+    <div class="div-sub">apply a function to every item · lazy iterator</div>
+  </div>
+  <div class="div-line"></div>
+</div>
+
+<div class="concept-card reveal">
+  <div class="card-accent-bar" style="background:var(--map-c)"></div>
+  <div class="card-body">
+
+    <div class="kid-story" style="border-color:var(--map-c)">
+      <div class="kid-emoji">🍋</div>
+      <div class="kid-text">
+        <strong>Kid story:</strong> You have 10 glasses of plain water in a row. You want to add lemon to every single one. You <em>could</em> do it one-by-one slowly. OR you use a machine that rolls down the row and squeezes lemon into each glass automatically. <strong>map() is that machine.</strong> Give it ONE job (squeeze lemon = your function) and ONE row of things (the glasses = your list). It does the job to everything.
+      </div>
+    </div>
+
+    <!-- INTERACTIVE DEMO -->
+    <div class="demo-panel">
+      <h4>⚡ Live Demo — click a transformation</h4>
+      <div class="demo-io">
+        <div class="demo-box">
+          <div class="demo-box-lbl" style="color:#ffa726">📥 Input</div>
+          <div class="token-row" id="map-input"></div>
+        </div>
+        <div class="demo-mid">
+          <div class="fn-chip" id="map-fn-label">lambda x: x*2</div>
+          <div style="color:var(--muted);font-size:1.2rem">↓</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--iter-c);background:rgba(38,198,218,.1);border:1px solid rgba(38,198,218,.3);padding:3px 7px;border-radius:5px">map()</div>
+        </div>
+        <div class="demo-box">
+          <div class="demo-box-lbl" style="color:#66bb6a">📤 Output</div>
+          <div class="token-row" id="map-output"></div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn" style="color:var(--map-c);border-color:rgba(255,112,67,.4)" onclick="mapDemo([100,200,350,500],x=>+(x*1.18).toFixed(1),'lambda p: p*1.18 (18% GST)')">Add GST 18%</button>
+        <button class="btn" style="color:#ffa726;border-color:rgba(255,167,38,.4)" onclick="mapDemo(['alice','bob','charlie'],x=>x.toUpperCase(),'lambda s: s.upper()')">UPPERCASE</button>
+        <button class="btn" style="color:var(--iter-c);border-color:rgba(38,198,218,.4)" onclick="mapDemo(['  order_id  ','  revenue  ','  date  '],x=>x.trim(),'lambda s: s.strip()')">Strip spaces</button>
+        <button class="btn" style="color:#66bb6a;border-color:rgba(102,187,106,.4)" onclick="mapDemo([1,2,3,4,5,6],x=>x%2===0?'even':'odd','lambda x: odd/even')">Odd / Even</button>
+      </div>
+    </div>
+
+    <div class="pipeline-wrap">
+      <div class="pipeline">
+        <div class="pnode">
+          <div class="pnode-box" style="background:rgba(255,167,38,.08);border-color:rgba(255,167,38,.4);color:#ffa726">[1,2,3,<br>4,5...]</div>
+          <div class="pnode-sub">INPUT<br>iterable</div>
+        </div>
+        <div class="parrow">→</div>
+        <div class="pnode">
+          <div class="pnode-box" style="background:rgba(255,112,67,.08);border-color:rgba(255,112,67,.4);color:var(--map-c)">lambda x:<br>x * 2</div>
+          <div class="pnode-sub">YOUR<br>function</div>
+        </div>
+        <div class="parrow">→</div>
+        <div class="pnode">
+          <div class="pnode-box" style="background:rgba(38,198,218,.08);border-color:rgba(38,198,218,.4);color:var(--iter-c)">map()<br>machine</div>
+          <div class="pnode-sub">APPLIES fn<br>lazily</div>
+        </div>
+        <div class="parrow">→</div>
+        <div class="pnode">
+          <div class="pnode-box" style="background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.1);color:var(--dim)">&lt;map<br>object&gt;</div>
+          <div class="pnode-sub">NOT computed<br>yet (lazy!)</div>
+        </div>
+        <div class="parrow">→</div>
+        <div class="pnode">
+          <div class="pnode-box" style="background:rgba(102,187,106,.08);border-color:rgba(102,187,106,.4);color:#66bb6a">list(<br>result)</div>
+          <div class="pnode-sub">MATERIALIZE<br>when needed</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="code">
+<span class="cm"># ── SYNTAX ──────────────────────────────────────────────</span>
+<span class="cm">#   map( function , iterable )</span>
+<span class="cm">#        ↑              ↑</span>
+<span class="cm">#   what to do     what to apply it TO</span>
+
+<span class="cm"># Basic usage</span>
+<span class="kw">result</span> = <span class="fn">list</span>(<span class="fn">map</span>(<span class="kw">lambda</span> x: x * <span class="nm">2</span>, [<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>,<span class="nm">4</span>]))  <span class="cm"># → [2,4,6,8]</span>
+
+<span class="cm"># With existing named function (cleaner!)</span>
+<span class="kw">def</span> <span class="fn">apply_gst</span>(p): <span class="kw">return</span> <span class="fn">round</span>(p * <span class="nm">1.18</span>, <span class="nm">2</span>)
+<span class="kw">prices</span>  = [<span class="nm">100</span>, <span class="nm">200</span>, <span class="nm">350</span>]
+<span class="kw">taxed</span>   = <span class="fn">list</span>(<span class="fn">map</span>(<span class="fn">apply_gst</span>, prices))          <span class="cm"># → [118.0, 236.0, 413.0]</span>
+
+<span class="cm"># TWO iterables — one item from each simultaneously</span>
+<span class="kw">base</span>    = [<span class="nm">50000</span>, <span class="nm">60000</span>, <span class="nm">70000</span>]
+<span class="kw">bonus</span>   = [<span class="nm">5000</span>,  <span class="nm">8000</span>,  <span class="nm">10000</span>]
+<span class="kw">total</span>   = <span class="fn">list</span>(<span class="fn">map</span>(<span class="kw">lambda</span> b,s: b+s, base, bonus))  <span class="cm"># → [55000, 68000, 80000]</span>
+
+<span class="cm"># ⚠️ map() returns a MAP OBJECT (lazy) — NOT a list yet!</span>
+<span class="kw">m</span> = <span class="fn">map</span>(<span class="kw">lambda</span> x: x*<span class="nm">2</span>, range(<span class="nm">1_000_000</span>))
+<span class="fn">print</span>(m)           <span class="cm"># &lt;map object at 0x10f3c&gt;</span>
+<span class="fn">next</span>(m)            <span class="cm"># → 0   (computes ONLY the first)</span>
+<span class="fn">next</span>(m)            <span class="cm"># → 2   (computes ONLY the second)</span></div>
+
+    <div class="senior-box" style="background:rgba(255,112,67,.06);border:1px solid rgba(255,112,67,.2)">
+      <div class="senior-label" style="color:var(--map-c)">🏭 Senior DE Answer <span class="badge">say this in interview</span></div>
+      <div class="senior-quote">
+        "I use map() primarily in two situations. First, <strong>when I already have a named transformation function</strong> — map(normalize_column, raw_cols) reads like English. Second, <strong>for large datasets where memory matters</strong> — map() is a lazy iterator, it holds a recipe not results. When I'm streaming 50GB of records through a transformation, I can chain map() calls without ever materialising the full dataset in RAM. This is the same lazy evaluation model that <strong>PySpark uses</strong> — transformations like .map() and .filter() build a logical plan, and nothing executes until an action like .collect() or .write() is called. Same concept, different scale."
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     2. ITERATOR
+══════════════════════════════════════════════ -->
+<div class="divider reveal" id="s-iter" data-label="iterator">
+  <div class="div-num" style="color:var(--iter-c)">02</div>
+  <div class="div-content">
+    <div class="div-title" style="color:var(--iter-c)">Iterator & Iterable</div>
+    <div class="div-sub">iter() · next() · StopIteration · the protocol</div>
+  </div>
+  <div class="div-line"></div>
+</div>
+
+<div class="concept-card reveal">
+  <div class="card-accent-bar" style="background:var(--iter-c)"></div>
+  <div class="card-body">
+
+    <div class="kid-story" style="border-color:var(--iter-c)">
+      <div class="kid-emoji">📚</div>
+      <div class="kid-text">
+        <strong>Kid story:</strong> A <strong>book</strong> is an <em>iterable</em> — it has all the pages inside it. A <strong>bookmark</strong> is an <em>iterator</em> — it knows which page you're on and gives you the NEXT page when you ask. The book doesn't move, the bookmark does. Once you reach the last page, the bookmark says <strong>"I'm done — StopIteration!"</strong>. You can make a new bookmark from the same book and start over.
+      </div>
+    </div>
+
+    <!-- INTERACTIVE ITERATOR -->
+    <div class="iter-track">
+      <div class="iter-status">Iterator position: item <span id="iter-pos">0</span> of 8 &nbsp;|&nbsp; Call <code style="color:var(--iter-c)">next()</code> to advance →</div>
+      <div class="iter-items" id="iter-items"></div>
+      <div class="btn-row">
+        <button class="btn" style="color:var(--iter-c);border-color:rgba(38,198,218,.4)" onclick="iterNext()">next() →</button>
+        <button class="btn" style="color:var(--dim);border-color:var(--border)" onclick="iterReset()">reset</button>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <div style="font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px">ITERABLE</div>
+        <div style="background:rgba(38,198,218,.06);border:1px solid rgba(38,198,218,.2);border-radius:10px;padding:12px 14px;font-size:.82rem;color:#b8b8d8;line-height:1.6">
+          ✓ Has data inside it<br>
+          ✓ Can be looped<br>
+          ✓ Has <code style="color:var(--iter-c)">__iter__()</code> method<br>
+          ✓ list, tuple, dict, str, set<br>
+          ✗ Does NOT remember position
+        </div>
+      </div>
+      <div>
+        <div style="font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px">ITERATOR</div>
+        <div style="background:rgba(171,71,188,.06);border:1px solid rgba(171,71,188,.2);border-radius:10px;padding:12px 14px;font-size:.82rem;color:#b8b8d8;line-height:1.6">
+          ✓ Remembers WHERE you are<br>
+          ✓ Has <code style="color:#ab47bc">__next__()</code> method<br>
+          ✓ Returns ONE item per call<br>
+          ✓ map, filter, zip, generator<br>
+          ✗ Can only go FORWARD
+        </div>
+      </div>
+    </div>
+
+    <div class="code">
+<span class="cm"># ── THE ITERATOR PROTOCOL ───────────────────────────────</span>
+<span class="kw">my_list</span> = [<span class="nm">10</span>, <span class="nm">20</span>, <span class="nm">30</span>, <span class="nm">40</span>]   <span class="cm"># ← ITERABLE (has data)</span>
+
+<span class="cm"># iter() creates an ITERATOR from an iterable</span>
+<span class="kw">my_iter</span> = <span class="fn">iter</span>(my_list)       <span class="cm"># ← ITERATOR (has position)</span>
+
+<span class="fn">next</span>(my_iter)  <span class="cm"># → 10  (advances pointer)</span>
+<span class="fn">next</span>(my_iter)  <span class="cm"># → 20</span>
+<span class="fn">next</span>(my_iter)  <span class="cm"># → 30</span>
+<span class="fn">next</span>(my_iter)  <span class="cm"># → 40</span>
+<span class="fn">next</span>(my_iter)  <span class="cm"># → StopIteration ← list exhausted!</span>
+
+<span class="cm"># for loops use this protocol AUTOMATICALLY under the hood</span>
+<span class="kw">for</span> item <span class="kw">in</span> my_list:           <span class="cm"># Python secretly calls iter() + next()</span>
+    <span class="fn">print</span>(item)
+
+<span class="cm"># What Python ACTUALLY does internally:</span>
+<span class="kw">_iter</span> = <span class="fn">iter</span>(my_list)
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="kw">try</span>:
+        item = <span class="fn">next</span>(_iter)
+        <span class="fn">print</span>(item)
+    <span class="kw">except</span> StopIteration:
+        <span class="kw">break</span></div>
+
+    <div class="senior-box" style="background:rgba(38,198,218,.05);border:1px solid rgba(38,198,218,.18)">
+      <div class="senior-label" style="color:var(--iter-c)">🏭 Senior DE Answer <span class="badge">say this in interview</span></div>
+      <div class="senior-quote">
+        "The iterator protocol is the backbone of Python's memory efficiency. An <strong>iterable</strong> holds data — a list, a file, a database cursor. An <strong>iterator</strong> is a stateful pointer that says 'give me the next item' via <code>__next__()</code>, raising StopIteration when exhausted. <strong>The critical thing for data engineering</strong> is that iterators are lazy — they don't hold all data in memory. When I open a file with <code>open()</code>, I get a file iterator — it reads one line at a time, not the whole file. In Spark, RDDs are iterators distributed across partitions. Understanding this protocol is why I can process <strong>datasets larger than RAM</strong> — I never load everything at once, I stream through it one item at a time."
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     3. GENERATOR
+══════════════════════════════════════════════ -->
+<div class="divider reveal" id="s-gen" data-label="generator">
+  <div class="div-num" style="color:var(--gen-c)">03</div>
+  <div class="div-content">
+    <div class="div-title" style="color:var(--gen-c)">Generator</div>
+    <div class="div-sub">yield · generator function · generator expression · infinite streams</div>
+  </div>
+  <div class="div-line"></div>
+</div>
+
+<div class="concept-card reveal">
+  <div class="card-accent-bar" style="background:var(--gen-c)"></div>
+  <div class="card-body">
+
+    <div class="kid-story" style="border-color:var(--gen-c)">
+      <div class="kid-emoji">🎰</div>
+      <div class="kid-text">
+        <strong>Kid story:</strong> Imagine a <strong>vending machine</strong> that doesn't stock ALL drinks at once — that would fill a whole warehouse! Instead, when you press the button, it <strong>makes one drink right then and gives it to you</strong>. Press again — makes another one. The machine knows the recipe and makes drinks ON DEMAND. That's a generator — it makes values one at a time when you ask, using <strong>yield</strong> as the "give me one now" instruction.
+      </div>
+    </div>
+
+    <!-- GENERATOR TAPE VISUAL -->
+    <div style="background:#06060a;border:1px solid var(--border);border-radius:12px;padding:18px;margin:14px 0">
+      <div style="font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Generator — reveals values one at a time</div>
+      <div class="gen-tape" id="gen-tape"></div>
+      <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
+        <button class="btn" style="color:var(--gen-c);border-color:rgba(171,71,188,.4)" onclick="genNext()">yield next →</button>
+        <button class="btn" style="color:var(--dim);border-color:var(--border)" onclick="genReset()">reset</button>
+        <span style="font-size:.72rem;color:var(--muted);font-family:'JetBrains Mono',monospace" id="gen-status">items revealed: 0 / 10</span>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="code" style="margin:0">
+<span class="cm"># Generator FUNCTION (has yield)</span>
+<span class="kw">def</span> <span class="fn">even_numbers</span>(limit):
+    n = <span class="nm">0</span>
+    <span class="kw">while</span> n &lt; limit:
+        <span class="kw">yield</span> n          <span class="cm"># PAUSE & give value</span>
+        n += <span class="nm">2</span>           <span class="cm"># RESUME from here</span>
+
+g = <span class="fn">even_numbers</span>(<span class="nm">10</span>)
+<span class="fn">next</span>(g)  <span class="cm"># → 0</span>
+<span class="fn">next</span>(g)  <span class="cm"># → 2</span>
+<span class="fn">next</span>(g)  <span class="cm"># → 4</span></div>
+      <div class="code" style="margin:0">
+<span class="cm"># Generator EXPRESSION (like list comp)</span>
+<span class="kw">gen</span> = (x**<span class="nm">2</span> <span class="kw">for</span> x <span class="kw">in</span> range(<span class="nm">1_000_000</span>))
+
+<span class="cm"># vs list comprehension:</span>
+<span class="kw">lst</span> = [x**<span class="nm">2</span> <span class="kw">for</span> x <span class="kw">in</span> range(<span class="nm">1_000_000</span>)]
+
+<span class="cm"># gen  → 120 bytes (lazy!)</span>
+<span class="cm"># lst  → 8.5 MB (all in RAM!)</span>
+<span class="cm"># Use () not [] for generator</span></div>
+    </div>
+
+    <div class="code">
+<span class="cm"># ── REAL DE USE CASE: Stream large file without loading all ──</span>
+<span class="kw">def</span> <span class="fn">read_csv_chunks</span>(filepath, chunk_size=<span class="nm">10000</span>):
+    <span class="kw">with</span> <span class="fn">open</span>(filepath) <span class="kw">as</span> f:
+        chunk = []
+        <span class="kw">for</span> line <span class="kw">in</span> f:             <span class="cm"># f itself is an iterator!</span>
+            chunk.<span class="fn">append</span>(line)
+            <span class="kw">if</span> <span class="fn">len</span>(chunk) == chunk_size:
+                <span class="kw">yield</span> chunk        <span class="cm"># give 10k rows, pause</span>
+                chunk = []         <span class="cm"># clear, resume</span>
+        <span class="kw">if</span> chunk:
+            <span class="kw">yield</span> chunk            <span class="cm"># leftover rows</span>
+
+<span class="cm"># Process 100GB file with constant ~10k row memory footprint</span>
+<span class="kw">for</span> chunk <span class="kw">in</span> <span class="fn">read_csv_chunks</span>(<span class="nm">'huge_file.csv'</span>):
+    <span class="fn">process_and_load</span>(chunk)        <span class="cm"># only 10k rows in RAM at a time</span></div>
+
+    <div class="mem-visual">
+      <div style="font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px">Memory: Processing 10 million rows</div>
+      <div class="mem-row">
+        <div class="mem-header"><span>📝 list comprehension — all at once</span><span><code>~800 MB</code></span></div>
+        <div class="mem-track"><div class="mem-fill fill-bad" id="bar-list" style="width:0%">loading all 10M rows...</div></div>
+      </div>
+      <div class="mem-row">
+        <div class="mem-header"><span>⚡ generator — one chunk at a time</span><span><code>~0.8 MB</code></span></div>
+        <div class="mem-track"><div class="mem-fill fill-good" id="bar-gen" style="width:0%">one chunk</div></div>
+      </div>
+      <div class="mem-row">
+        <div class="mem-header"><span>🔄 map() object — lazy iterator</span><span><code>48 bytes</code></span></div>
+        <div class="mem-track"><div class="mem-fill fill-tiny" id="bar-map" style="width:0%">recipe only</div></div>
+      </div>
+    </div>
+
+    <div class="senior-box" style="background:rgba(171,71,188,.05);border:1px solid rgba(171,71,188,.18)">
+      <div class="senior-label" style="color:var(--gen-c)">🏭 Senior DE Answer <span class="badge">say this in interview</span></div>
+      <div class="senior-quote">
+        "A generator is a function that uses <code>yield</code> instead of <code>return</code>. The key is <strong>it suspends execution at each yield and resumes from that exact point</strong> when next() is called. In production pipelines, I use generators for <strong>chunked processing of large files</strong> — instead of loading 100GB into memory, I yield chunks of 10,000 rows. Each chunk gets processed and written to the warehouse, then garbage collected. The memory footprint stays flat regardless of file size. It's the same principle as <strong>Spark's partition-based processing</strong> — you never need the whole dataset in one place, just the current partition. Generators in Python are how you get Spark-like streaming behaviour in a single machine context."
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     4. COMPREHENSIONS
+══════════════════════════════════════════════ -->
+<div class="divider reveal" id="s-comp" data-label="comprehension">
+  <div class="div-num" style="color:var(--comp-c)">04</div>
+  <div class="div-content">
+    <div class="div-title" style="color:var(--comp-c)">Comprehensions</div>
+    <div class="div-sub">list · dict · set · generator · when to use which</div>
+  </div>
+  <div class="div-line"></div>
+</div>
+
+<div class="concept-card reveal">
+  <div class="card-accent-bar" style="background:var(--comp-c)"></div>
+  <div class="card-body">
+
+    <div class="kid-story" style="border-color:var(--comp-c)">
+      <div class="kid-emoji">🏭</div>
+      <div class="kid-text">
+        <strong>Kid story:</strong> You want to make lemonade from 10 lemons. The <strong>old way</strong> — write a for-loop: get a pot, loop through each lemon, squeeze it into the pot, repeat. The <strong>comprehension way</strong> — say it in ONE sentence: <em>"Give me [squeezed juice for each lemon in basket]."</em> Python reads it left to right like English. <strong>Comprehensions ARE for-loops, just written as one readable expression.</strong>
+      </div>
+    </div>
+
+    <div class="code">
+<span class="cm"># ── ALL 4 TYPES OF COMPREHENSION ──────────────────────────</span>
+
+<span class="cm"># 1. LIST comprehension → [ ]  (eager, returns list)</span>
+<span class="kw">clean_cols</span> = [col.<span class="fn">strip</span>().<span class="fn">lower</span>() <span class="kw">for</span> col <span class="kw">in</span> raw_cols]
+
+<span class="cm"># 2. DICT comprehension → { : }  (key-value pairs)</span>
+<span class="kw">col_map</span> = {old: old.<span class="fn">replace</span>(<span class="str">' '</span>, <span class="str">'_'</span>) <span class="kw">for</span> old <span class="kw">in</span> column_names}
+
+<span class="cm"># 3. SET comprehension → { }  (unique values only)</span>
+<span class="kw">unique_regions</span> = {row[<span class="str">'region'</span>] <span class="kw">for</span> row <span class="kw">in</span> data}
+
+<span class="cm"># 4. GENERATOR expression → ( )  (lazy — best for large data!)</span>
+<span class="kw">taxed_stream</span> = (price * <span class="nm">1.18</span> <span class="kw">for</span> price <span class="kw">in</span> prices)
+
+<span class="cm"># ── WITH CONDITION (filter inline) ──────────────────────────</span>
+<span class="kw">high_value</span>   = [x <span class="kw">for</span> x <span class="kw">in</span> transactions <span class="kw">if</span> x > <span class="nm">1000</span>]
+<span class="kw">active_users</span> = {u[<span class="str">'id'</span>]: u[<span class="str">'name'</span>] <span class="kw">for</span> u <span class="kw">in</span> users <span class="kw">if</span> u[<span class="str">'active'</span>]}
+
+<span class="cm"># ── NESTED (flatten a 2D list) ────────────────────────────── </span>
+<span class="kw">flat</span> = [val <span class="kw">for</span> row <span class="kw">in</span> matrix <span class="kw">for</span> val <span class="kw">in</span> row]
+
+<span class="cm"># Read like English: "val, for each row in matrix, for each val in row"</span></div>
+
+    <table class="cmp-table">
+      <thead>
+        <tr>
+          <th>Type</th><th>Syntax</th><th>Returns</th><th>Memory</th><th>When to use</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>[…]</td><td class="mono">[x for x in …]</td><td>list</td><td class="no">Eager (all)</td><td>Small data, need index access</td></tr>
+        <tr><td>{k:v}</td><td class="mono">{k:v for … }</td><td>dict</td><td class="no">Eager</td><td>Schema mapping, lookup tables</td></tr>
+        <tr><td>{…}</td><td class="mono">{x for x in …}</td><td>set</td><td class="no">Eager</td><td>Unique values, dedup</td></tr>
+        <tr><td>(…)</td><td class="mono">(x for x in …)</td><td>generator</td><td class="yes">Lazy ✓</td><td>Large data, streaming</td></tr>
+      </tbody>
+    </table>
+
+    <div class="senior-box" style="background:rgba(102,187,106,.05);border:1px solid rgba(102,187,106,.18)">
+      <div class="senior-label" style="color:var(--comp-c)">🏭 Senior DE Answer <span class="badge">say this in interview</span></div>
+      <div class="senior-quote">
+        "I choose between comprehension types based on three questions: what shape is the output, do I need uniqueness, and how large is the data? <strong>Dict comprehensions</strong> are my most-used — I build schema mapping dicts constantly: renaming columns, type-cast registries, config lookups. <strong>Set comprehensions</strong> for fast deduplication checks. <strong>Generator expressions</strong> when the data is large — using <code>()</code> instead of <code>[]</code> means I get lazy evaluation for free without writing a full generator function. The rule I follow: if it fits in a list comp and doesn't blow memory, write it as a list comp — it's the most readable. If the dataset could be large, switch the brackets to parens."
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     5. ZIP
+══════════════════════════════════════════════ -->
+<div class="divider reveal" id="s-zip" data-label="zip()">
+  <div class="div-num" style="color:var(--zip-c)">05</div>
+  <div class="div-content">
+    <div class="div-title" style="color:var(--zip-c)">zip()</div>
+    <div class="div-sub">parallel iteration · pairing lists · dict creation</div>
+  </div>
+  <div class="div-line"></div>
+</div>
+
+<div class="concept-card reveal">
+  <div class="card-accent-bar" style="background:var(--zip-c)"></div>
+  <div class="card-body">
+
+    <div class="kid-story" style="border-color:var(--zip-c)">
+      <div class="kid-emoji">🤝</div>
+      <div class="kid-text">
+        <strong>Kid story:</strong> Two rows of kids standing in line — one row has <strong>names</strong>, one row has <strong>scores</strong>. zip() is a teacher that says <em>"everyone pair up — first with first, second with second, third with third."</em> Alice pairs with 95. Bob pairs with 87. Now you have <strong>pairs</strong>. Just like a jacket zipper — left teeth meet right teeth one by one.
+      </div>
+    </div>
+
+    <div class="zip-visual">
+      <div class="zip-row">
+        <div class="zip-label">List A</div>
+        <div class="zip-items">
+          <div class="zip-item" style="background:rgba(255,167,38,.08);border-color:rgba(255,167,38,.35);color:#ffa726">'Alice'</div>
+          <div class="zip-item" style="background:rgba(255,167,38,.08);border-color:rgba(255,167,38,.35);color:#ffa726">'Bob'</div>
+          <div class="zip-item" style="background:rgba(255,167,38,.08);border-color:rgba(255,167,38,.35);color:#ffa726">'Charlie'</div>
+          <div class="zip-item" style="background:rgba(255,167,38,.08);border-color:rgba(255,167,38,.35);color:#ffa726">'Dave'</div>
+        </div>
+      </div>
+      <div class="zip-row">
+        <div class="zip-label">List B</div>
+        <div class="zip-items">
+          <div class="zip-item" style="background:rgba(38,198,218,.08);border-color:rgba(38,198,218,.35);color:#26c6da">95</div>
+          <div class="zip-item" style="background:rgba(38,198,218,.08);border-color:rgba(38,198,218,.35);color:#26c6da">87</div>
+          <div class="zip-item" style="background:rgba(38,198,218,.08);border-color:rgba(38,198,218,.35);color:#26c6da">92</div>
+          <div class="zip-item" style="background:rgba(38,198,218,.08);border-color:rgba(38,198,218,.35);color:#26c6da">78</div>
+        </div>
+      </div>
+      <div class="zip-divider"></div>
+      <div class="zip-row zip-result">
+        <div class="zip-label" style="color:var(--zip-c)">zip() →</div>
+        <div class="zip-items">
+          <div class="zip-item" style="background:rgba(255,167,38,.05);border-color:rgba(255,255,255,.1);color:#c0c0dc;font-size:.65rem">('Alice',95)</div>
+          <div class="zip-item" style="background:rgba(255,167,38,.05);border-color:rgba(255,255,255,.1);color:#c0c0dc;font-size:.65rem">('Bob',87)</div>
+          <div class="zip-item" style="background:rgba(255,167,38,.05);border-color:rgba(255,255,255,.1);color:#c0c0dc;font-size:.65rem">('Charlie',92)</div>
+          <div class="zip-item" style="background:rgba(255,167,38,.05);border-color:rgba(255,255,255,.1);color:#c0c0dc;font-size:.65rem">('Dave',78)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="code">
+<span class="cm"># zip() — pairs up iterables element by element</span>
+<span class="kw">names</span>  = [<span class="str">'Alice'</span>, <span class="str">'Bob'</span>, <span class="str">'Charlie'</span>]
+<span class="kw">scores</span> = [<span class="nm">95</span>, <span class="nm">87</span>, <span class="nm">92</span>]
+
+<span class="cm"># Loop over pairs</span>
+<span class="kw">for</span> name, score <span class="kw">in</span> <span class="fn">zip</span>(names, scores):
+    <span class="fn">print</span>(<span class="str">f"{name}: {score}"</span>)    <span class="cm"># Alice: 95 / Bob: 87 / Charlie: 92</span>
+
+<span class="cm"># Build dict from two lists (VERY common in DE!)</span>
+<span class="kw">columns</span> = [<span class="str">'id'</span>, <span class="str">'name'</span>, <span class="str">'revenue'</span>]
+<span class="kw">values</span>  = [<span class="nm">101</span>, <span class="str">'Alice'</span>, <span class="nm">50000</span>]
+<span class="kw">row_dict</span> = <span class="fn">dict</span>(<span class="fn">zip</span>(columns, values))
+<span class="cm"># → {'id': 101, 'name': 'Alice', 'revenue': 50000}</span>
+
+<span class="cm"># Unzip — reverse a zip (use * to unpack)</span>
+<span class="kw">pairs</span> = [(<span class="str">'Alice'</span>, <span class="nm">95</span>), (<span class="str">'Bob'</span>, <span class="nm">87</span>), (<span class="str">'Charlie'</span>, <span class="nm">92</span>)]
+<span class="kw">names</span>, <span class="kw">scores</span> = <span class="fn">zip</span>(*pairs)      <span class="cm"># unpack all tuples</span>
+
+<span class="cm"># ⚠️ zip stops at SHORTEST list</span>
+<span class="fn">list</span>(<span class="fn">zip</span>([<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>,<span class="nm">4</span>], [<span class="str">'a'</span>,<span class="str">'b'</span>])) <span class="cm"># → [(1,'a'), (2,'b')]  — stops at 2!</span>
+
+<span class="cm"># Use itertools.zip_longest to keep all (fills None for shorter)</span>
+<span class="kw">from</span> itertools <span class="kw">import</span> zip_longest
+<span class="fn">list</span>(<span class="fn">zip_longest</span>([<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>,<span class="nm">4</span>], [<span class="str">'a'</span>,<span class="str">'b'</span>], fillvalue=<span class="kw">None</span>))</div>
+
+    <div class="senior-box" style="background:rgba(255,167,38,.05);border:1px solid rgba(255,167,38,.18)">
+      <div class="senior-label" style="color:var(--zip-c)">🏭 Senior DE Answer <span class="badge">say this in interview</span></div>
+      <div class="senior-quote">
+        "zip() is indispensable for data engineering. My most common pattern: <strong>dict(zip(column_names, row_values))</strong> — when reading CSV rows, you get column headers from line 1 and values from each subsequent line, and zip turns them into a proper dict. I also use it for <strong>schema validation</strong> — zipping expected columns with actual columns to find mismatches. One gotcha I always warn juniors about: <strong>zip silently stops at the shortest iterable</strong> — if your column list has 10 headers but a bad row has 9 values, zip drops the last column with zero error. For production data pipelines, I use <code>zip_longest</code> with a fillvalue and then validate lengths explicitly."
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     6. ENUMERATE
+══════════════════════════════════════════════ -->
+<div class="divider reveal" id="s-enum" data-label="enumerate()">
+  <div class="div-num" style="color:var(--enum-c)">06</div>
+  <div class="div-content">
+    <div class="div-title" style="color:var(--enum-c)">enumerate()</div>
+    <div class="div-sub">index + value · never use range(len()) again</div>
+  </div>
+  <div class="div-line"></div>
+</div>
+
+<div class="concept-card reveal">
+  <div class="card-accent-bar" style="background:var(--enum-c)"></div>
+  <div class="card-body">
+
+    <div class="kid-story" style="border-color:var(--enum-c)">
+      <div class="kid-emoji">🎫</div>
+      <div class="kid-text">
+        <strong>Kid story:</strong> At a concert, everyone gets a <strong>numbered wristband</strong> as they walk in — person 1 gets wristband 0, person 2 gets wristband 1, and so on. Now you always know <strong>BOTH who the person is AND what position they entered</strong>. enumerate() does exactly this — it walks your list and gives each item a number automatically.
+      </div>
+    </div>
+
+    <div class="enum-rows">
+      <div class="enum-row"><div class="enum-idx">0</div><div class="enum-sep">→</div><div class="enum-val">'extract'</div></div>
+      <div class="enum-row"><div class="enum-idx">1</div><div class="enum-sep">→</div><div class="enum-val">'transform'</div></div>
+      <div class="enum-row"><div class="enum-idx">2</div><div class="enum-sep">→</div><div class="enum-val">'validate'</div></div>
+      <div class="enum-row"><div class="enum-idx">3</div><div class="enum-sep">→</div><div class="enum-val">'load'</div></div>
+    </div>
+
+    <div class="code">
+<span class="cm"># ❌ WRONG WAY — range(len()) is ugly and error-prone</span>
+<span class="kw">stages</span> = [<span class="str">'extract'</span>, <span class="str">'transform'</span>, <span class="str">'validate'</span>, <span class="str">'load'</span>]
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(stages)):
+    <span class="fn">print</span>(i, stages[i])   <span class="cm"># ← clunky, two indexing operations</span>
+
+<span class="cm"># ✅ RIGHT WAY — enumerate() gives (index, value) pairs</span>
+<span class="kw">for</span> i, stage <span class="kw">in</span> <span class="fn">enumerate</span>(stages):
+    <span class="fn">print</span>(<span class="str">f"Step {i}: {stage}"</span>)
+
+<span class="cm"># Start from 1 instead of 0</span>
+<span class="kw">for</span> step, stage <span class="kw">in</span> <span class="fn">enumerate</span>(stages, start=<span class="nm">1</span>):
+    <span class="fn">print</span>(<span class="str">f"Step {step} of {len(stages)}: {stage}"</span>)
+<span class="cm"># Step 1 of 4: extract</span>
+
+<span class="cm"># Build indexed dict from list</span>
+<span class="kw">stage_map</span> = {i: stage <span class="kw">for</span> i, stage <span class="kw">in</span> <span class="fn">enumerate</span>(stages)}
+<span class="cm"># → {0: 'extract', 1: 'transform', 2: 'validate', 3: 'load'}</span>
+
+<span class="cm"># Find position of error rows in a file</span>
+<span class="kw">bad_rows</span> = [(i, row) <span class="kw">for</span> i, row <span class="kw">in</span> <span class="fn">enumerate</span>(data) <span class="kw">if</span> row[<span class="str">'amount'</span>] &lt; <span class="nm">0</span>]</div>
+
+    <div class="senior-box" style="background:rgba(239,83,80,.05);border:1px solid rgba(239,83,80,.18)">
+      <div class="senior-label" style="color:var(--enum-c)">🏭 Senior DE Answer <span class="badge">say this in interview</span></div>
+      <div class="senior-quote">
+        "enumerate() is one of those builtins that immediately separates Python developers who write Pythonic code from those coming from Java or SQL backgrounds. <strong>If I see range(len(x)) in a code review, I flag it</strong> — it's unnecessarily verbose and creates an extra indexing step. enumerate() gives you the index and the value together in one clean unpack. In data engineering specifically, I use it for <strong>progress logging</strong> in long-running jobs — logging every 100k rows: <code>if i % 100_000 == 0: logger.info(f'Processed {i} rows')</code>. Also for generating <strong>row numbers</strong> when writing to a warehouse table that needs a sequential ID."
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     7. FILTER
+══════════════════════════════════════════════ -->
+<div class="divider reveal" id="s-filter" data-label="filter()">
+  <div class="div-num" style="color:var(--filter-c)">07</div>
+  <div class="div-content">
+    <div class="div-title" style="color:var(--filter-c)">filter()</div>
+    <div class="div-sub">keep only what passes the test · lazy · WHERE clause in Python</div>
+  </div>
+  <div class="div-line"></div>
+</div>
+
+<div class="concept-card reveal">
+  <div class="card-accent-bar" style="background:var(--filter-c)"></div>
+  <div class="card-body">
+
+    <div class="kid-story" style="border-color:var(--filter-c)">
+      <div class="kid-emoji">🧲</div>
+      <div class="kid-text">
+        <strong>Kid story:</strong> Imagine a <strong>sieve</strong> — pour mixed sand and rocks through it, small grains fall through, big rocks stay on top. filter() is a sieve for your data. Give it a <strong>test function</strong> (is this item big enough?) and a list. Items that <strong>pass the test</strong> come through. Items that <strong>fail</strong> are discarded. Unlike map() which transforms everything, <strong>filter() removes things</strong>.
+      </div>
+    </div>
+
+    <div class="demo-panel">
+      <h4>⚡ filter() vs map() — interactive</h4>
+      <div class="demo-io">
+        <div class="demo-box">
+          <div class="demo-box-lbl" style="color:#ffa726">📥 Input [100,500,80,1200,300,2500]</div>
+          <div class="token-row" id="filter-input">
+            <div class="tok tok-in">100</div><div class="tok tok-in">500</div><div class="tok tok-in">80</div>
+            <div class="tok tok-in">1200</div><div class="tok tok-in">300</div><div class="tok tok-in">2500</div>
+          </div>
+        </div>
+        <div class="demo-mid">
+          <div class="fn-chip" style="background:rgba(66,165,245,.12);border-color:rgba(66,165,245,.4);color:var(--filter-c)" id="filter-fn-lbl">x &gt; 400</div>
+          <div style="color:var(--muted);font-size:1.2rem">↓</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--filter-c);background:rgba(66,165,245,.1);border:1px solid rgba(66,165,245,.3);padding:3px 7px;border-radius:5px">filter()</div>
+        </div>
+        <div class="demo-box">
+          <div class="demo-box-lbl" style="color:#66bb6a">📤 Kept</div>
+          <div class="token-row" id="filter-output"></div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn" style="color:var(--filter-c);border-color:rgba(66,165,245,.4)" onclick="filterDemo([100,500,80,1200,300,2500],x=>x>400,'x > 400')">Keep &gt; 400</button>
+        <button class="btn" style="color:#ffa726;border-color:rgba(255,167,38,.4)" onclick="filterDemo([100,500,80,1200,300,2500],x=>x%2===0,'x % 2 == 0 (even)')">Evens only</button>
+        <button class="btn" style="color:#66bb6a;border-color:rgba(102,187,106,.4)" onclick="filterDemo(['Alice','','Bob',null,'Charlie',''],x=>x&&x.length>0,'non-empty strings')">Remove empty</button>
+      </div>
+    </div>
+
+    <div class="code">
+<span class="cm"># filter(function, iterable) → lazy iterator of items where fn returns True</span>
+
+<span class="kw">transactions</span> = [<span class="nm">100</span>, <span class="nm">500</span>, <span class="nm">80</span>, <span class="nm">1200</span>, <span class="nm">300</span>, <span class="nm">2500</span>]
+
+<span class="cm"># Keep only high-value transactions (like SQL WHERE amount > 400)</span>
+<span class="kw">high_value</span> = <span class="fn">list</span>(<span class="fn">filter</span>(<span class="kw">lambda</span> x: x > <span class="nm">400</span>, transactions))
+<span class="cm"># → [500, 1200, 2500]</span>
+
+<span class="cm"># Remove None/empty values (data cleaning)</span>
+<span class="kw">dirty</span> = [<span class="str">'Alice'</span>, <span class="kw">None</span>, <span class="str">''</span>, <span class="str">'Bob'</span>, <span class="kw">None</span>, <span class="str">'Charlie'</span>]
+<span class="kw">clean</span> = <span class="fn">list</span>(<span class="fn">filter</span>(<span class="kw">None</span>, dirty))   <span class="cm"># filter(None,...) removes falsy values</span>
+<span class="cm"># → ['Alice', 'Bob', 'Charlie']</span>
+
+<span class="cm"># CHAIN map + filter (ETL in 2 lines)</span>
+<span class="kw">result</span> = <span class="fn">list</span>(
+    <span class="fn">map</span>(<span class="kw">lambda</span> x: x * <span class="nm">1.18</span>,             <span class="cm"># step 2: apply tax</span>
+        <span class="fn">filter</span>(<span class="kw">lambda</span> x: x > <span class="nm">400</span>,       <span class="cm"># step 1: filter high-value</span>
+               transactions))
+)
+
+<span class="cm"># vs list comprehension (more readable for chained ops)</span>
+<span class="kw">result</span> = [x * <span class="nm">1.18</span> <span class="kw">for</span> x <span class="kw">in</span> transactions <span class="kw">if</span> x > <span class="nm">400</span>]</div>
+
+    <div class="senior-box" style="background:rgba(66,165,245,.05);border:1px solid rgba(66,165,245,.18)">
+      <div class="senior-label" style="color:var(--filter-c)">🏭 Senior DE Answer <span class="badge">say this in interview</span></div>
+      <div class="senior-quote">
+        "filter() is Python's WHERE clause. It returns a lazy iterator — same memory benefits as map(). In practice though, <strong>when I'm chaining filter + map I usually prefer a list comprehension</strong> because <code>[x*1.18 for x in data if x > 400]</code> reads left-to-right like a sentence, while <code>map(fn, filter(fn, data))</code> reads inside-out. I use explicit filter() when I already have a <strong>named predicate function</strong> — for example a validate_row() function that checks 10 columns — passing it directly as <code>filter(validate_row, rows)</code> is cleaner than a comprehension. The real power is <strong>filter(None, iterable)</strong> — it removes all falsy values in one shot, which I use constantly for cleaning nulls and empty strings from CSV ingestion."
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     8. REDUCE
+══════════════════════════════════════════════ -->
+<div class="divider reveal" id="s-reduce" data-label="reduce()">
+  <div class="div-num" style="color:var(--reduce-c)">08</div>
+  <div class="div-content">
+    <div class="div-title" style="color:var(--reduce-c)">reduce()</div>
+    <div class="div-sub">collapse many → one · accumulator pattern · functools</div>
+  </div>
+  <div class="div-line"></div>
+</div>
+
+<div class="concept-card reveal">
+  <div class="card-accent-bar" style="background:var(--reduce-c)"></div>
+  <div class="card-body">
+
+    <div class="kid-story" style="border-color:var(--reduce-c)">
+      <div class="kid-emoji">🏔️</div>
+      <div class="kid-text">
+        <strong>Kid story:</strong> You have 5 snowballs. You want ONE giant snowball. So you take the first two, mash them together — now you have 4 balls. Take the result + the third, mash — now 3 balls. Keep going until you have <strong>one massive snowball</strong>. reduce() does this — it keeps combining items with your function until only ONE remains. <strong>Many items in, one result out.</strong>
+      </div>
+    </div>
+
+    <div style="background:#06060a;border:1px solid var(--border);border-radius:12px;padding:18px;margin:14px 0;overflow-x:auto">
+      <div style="display:flex;align-items:center;gap:8px;min-width:500px;flex-wrap:nowrap">
+        <div class="tok tok-in" style="flex-shrink:0">100</div>
+        <div style="color:var(--reduce-c);font-size:.8rem;flex-shrink:0">+</div>
+        <div class="tok tok-in" style="flex-shrink:0">200</div>
+        <div style="color:var(--muted);flex-shrink:0">→</div>
+        <div class="tok tok-zip" style="flex-shrink:0">300</div>
+        <div style="color:var(--reduce-c);font-size:.8rem;flex-shrink:0">+</div>
+        <div class="tok tok-in" style="flex-shrink:0">150</div>
+        <div style="color:var(--muted);flex-shrink:0">→</div>
+        <div class="tok tok-zip" style="flex-shrink:0">450</div>
+        <div style="color:var(--reduce-c);font-size:.8rem;flex-shrink:0">+</div>
+        <div class="tok tok-in" style="flex-shrink:0">350</div>
+        <div style="color:var(--muted);flex-shrink:0">→</div>
+        <div class="tok tok-out" style="flex-shrink:0;border-color:rgba(236,64,122,.5)!important;color:#ec407a!important;background:rgba(236,64,122,.1)!important;font-weight:700">800</div>
+        <div style="color:#ec407a;font-size:.65rem;font-weight:700;flex-shrink:0">FINAL</div>
+      </div>
+    </div>
+
+    <div class="code">
+<span class="kw">from</span> functools <span class="kw">import</span> reduce
+
+<span class="cm"># reduce(function, iterable, initializer)</span>
+<span class="cm">#   function gets (accumulator, current_item)</span>
+<span class="cm">#   returns ONE final value</span>
+
+<span class="kw">nums</span> = [<span class="nm">100</span>, <span class="nm">200</span>, <span class="nm">150</span>, <span class="nm">350</span>]
+
+<span class="cm"># Sum (prefer sum() builtin, but good to know)</span>
+<span class="kw">total</span> = <span class="fn">reduce</span>(<span class="kw">lambda</span> acc, x: acc + x, nums)  <span class="cm"># → 800</span>
+
+<span class="cm"># Find MAX (prefer max() builtin)</span>
+<span class="kw">maximum</span> = <span class="fn">reduce</span>(<span class="kw">lambda</span> a, b: a <span class="kw">if</span> a > b <span class="kw">else</span> b, nums)  <span class="cm"># → 350</span>
+
+<span class="cm"># ── REAL DE USE: Merge multiple dicts (pipeline config) ──</span>
+<span class="kw">default_cfg</span> = {<span class="str">'timeout'</span>: <span class="nm">30</span>, <span class="str">'retries'</span>: <span class="nm">3</span>, <span class="str">'batch'</span>: <span class="nm">1000</span>}
+<span class="kw">env_cfg</span>     = {<span class="str">'timeout'</span>: <span class="nm">60</span>}
+<span class="kw">job_cfg</span>     = {<span class="str">'batch'</span>: <span class="nm">5000</span>, <span class="str">'debug'</span>: <span class="kw">True</span>}
+
+<span class="cm"># Later configs OVERRIDE earlier ones</span>
+<span class="kw">final_cfg</span> = <span class="fn">reduce</span>(<span class="kw">lambda</span> a, b: {**a, **b},
+                    [default_cfg, env_cfg, job_cfg])
+<span class="cm"># → {'timeout': 60, 'retries': 3, 'batch': 5000, 'debug': True}</span>
+
+<span class="cm"># ── Flatten nested lists ──</span>
+<span class="kw">nested</span> = [[<span class="nm">1</span>,<span class="nm">2</span>], [<span class="nm">3</span>,<span class="nm">4</span>], [<span class="nm">5</span>,<span class="nm">6</span>]]
+<span class="kw">flat</span>   = <span class="fn">reduce</span>(<span class="kw">lambda</span> a, b: a + b, nested)  <span class="cm"># → [1,2,3,4,5,6]</span></div>
+
+    <div class="senior-box" style="background:rgba(236,64,122,.05);border:1px solid rgba(236,64,122,.18)">
+      <div class="senior-label" style="color:var(--reduce-c)">🏭 Senior DE Answer <span class="badge">say this in interview</span></div>
+      <div class="senior-quote">
+        "reduce() is the fold/aggregate operation of functional programming. Honestly, <strong>for simple aggregations like sum or max, I always use the Python builtins</strong> — they're faster and clearer. Where reduce() genuinely earns its place in my code is <strong>merging layered configuration dicts</strong> — default config, then environment overrides, then job-specific overrides — reduce with dict unpacking applies each layer in order, later values winning. The other real use is <strong>chaining pipeline steps stored as a list of functions</strong>: <code>reduce(lambda acc, fn: fn(acc), [step1, step2, step3], raw_data)</code>. This pattern powers a lot of functional pipeline frameworks — each function takes the previous output and produces the next input."
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     9. DECORATOR
+══════════════════════════════════════════════ -->
+<div class="divider reveal" id="s-dec" data-label="decorator">
+  <div class="div-num" style="color:var(--dec-c)">09</div>
+  <div class="div-content">
+    <div class="div-title" style="color:var(--dec-c)">Decorator</div>
+    <div class="div-sub">wrapper pattern · @syntax · functools.wraps · pipeline middleware</div>
+  </div>
+  <div class="div-line"></div>
+</div>
+
+<div class="concept-card reveal">
+  <div class="card-accent-bar" style="background:var(--dec-c)"></div>
+  <div class="card-body">
+
+    <div class="kid-story" style="border-color:var(--dec-c)">
+      <div class="kid-emoji">🎁</div>
+      <div class="kid-text">
+        <strong>Kid story:</strong> Your function is a <strong>birthday cake</strong>. The decorator is the <strong>gift box, ribbons, and wrapping paper</strong> around it. The cake inside doesn't change — it's still your cake. But now everyone sees a beautifully wrapped gift before unwrapping it. The wrapping adds extra ceremony (logging, timing, security) without touching the cake itself. <strong>@decorator is just gift-wrapping your function.</strong>
+      </div>
+    </div>
+
+    <!-- LAYER VISUAL -->
+    <div class="dec-layers">
+      <div class="dec-layer layer-outer">
+        <div class="dec-layer-label" style="color:var(--dec-c)">Outer wrapper — @timer</div>
+        <div class="dec-layer-code">⏱ logs execution time before & after</div>
+      </div>
+      <div class="layer-arrow">↓ calls ↓</div>
+      <div class="dec-layer layer-mid">
+        <div class="dec-layer-label" style="color:#ffa726">Middle wrapper — @retry</div>
+        <div class="dec-layer-code">🔁 retries 3x on failure</div>
+      </div>
+      <div class="layer-arrow">↓ calls ↓</div>
+      <div class="dec-layer layer-inner">
+        <div class="dec-layer-label" style="color:#66bb6a">Your actual function — load_data()</div>
+        <div class="dec-layer-code">📦 does ONE job: loads data to warehouse</div>
+      </div>
+    </div>
+
+    <div class="code">
+<span class="kw">import</span> time, functools
+
+<span class="cm"># ── BUILD A DECORATOR STEP BY STEP ──────────────────────────</span>
+
+<span class="cm"># Step 1: A decorator is a function that TAKES and RETURNS a function</span>
+<span class="kw">def</span> <span class="fn">timer</span>(func):                          <span class="cm"># receives the function</span>
+    @<span class="fn">functools.wraps</span>(func)                 <span class="cm"># preserve __name__, __doc__</span>
+    <span class="kw">def</span> <span class="fn">wrapper</span>(*args, **kwargs):           <span class="cm"># same signature as original</span>
+        start = <span class="fn">time</span>.time()
+        result = <span class="fn">func</span>(*args, **kwargs)    <span class="cm"># call the REAL function</span>
+        elapsed = <span class="fn">time</span>.time() - start
+        <span class="fn">print</span>(<span class="str">f"[TIMER] {func.__name__} took {elapsed:.3f}s"</span>)
+        <span class="kw">return</span> result
+    <span class="kw">return</span> wrapper                         <span class="cm"># return the wrapped version</span>
+
+<span class="cm"># Step 2: Apply with @ syntax  (same as: load_data = timer(load_data))</span>
+<span class="kw">@timer</span>
+<span class="kw">def</span> <span class="fn">load_data</span>(table, rows):
+    <span class="fn">time</span>.sleep(<span class="nm">0.5</span>)                        <span class="cm"># simulate DB write</span>
+    <span class="kw">return</span> <span class="str">f"loaded {rows} rows into {table}"</span>
+
+<span class="fn">load_data</span>(<span class="str">'sales_fact'</span>, <span class="nm">50000</span>)
+<span class="cm"># → [TIMER] load_data took 0.501s</span>
+
+<span class="cm"># ── DECORATOR WITH ARGUMENTS (factory pattern) ───────────────</span>
+<span class="kw">def</span> <span class="fn">retry</span>(max_attempts=<span class="nm">3</span>, delay=<span class="nm">1</span>):
+    <span class="kw">def</span> <span class="fn">decorator</span>(func):
+        @<span class="fn">functools.wraps</span>(func)
+        <span class="kw">def</span> <span class="fn">wrapper</span>(*args, **kwargs):
+            <span class="kw">for</span> attempt <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, max_attempts + <span class="nm">1</span>):
+                <span class="kw">try</span>:
+                    <span class="kw">return</span> <span class="fn">func</span>(*args, **kwargs)
+                <span class="kw">except</span> Exception <span class="kw">as</span> e:
+                    <span class="kw">if</span> attempt == max_attempts: <span class="kw">raise</span>
+                    <span class="fn">time</span>.sleep(delay * attempt)  <span class="cm"># exponential backoff</span>
+        <span class="kw">return</span> wrapper
+    <span class="kw">return</span> decorator
+
+<span class="kw">@retry</span>(max_attempts=<span class="nm">3</span>, delay=<span class="nm">2</span>)
+<span class="kw">def</span> <span class="fn">call_api</span>(endpoint): ...   <span class="cm"># auto-retries with 2s, 4s, 6s backoff</span></div>
+
+    <div class="senior-box" style="background:rgba(141,110,99,.08);border:1px solid rgba(141,110,99,.25)">
+      <div class="senior-label" style="color:var(--dec-c)">🏭 Senior DE Answer <span class="badge">say this in interview</span></div>
+      <div class="senior-quote">
+        "Decorators are how I implement <strong>cross-cutting concerns</strong> in pipelines without polluting business logic. My ETL functions do one thing — the decorators handle operational concerns. I have a @timer decorator that logs execution time and row counts to a metadata table. A @retry decorator with exponential backoff for API calls and flaky DB connections. A @validate_schema decorator that checks input and output shapes. The <strong>key design principle is Single Responsibility</strong> — my extract() function knows nothing about retry logic. functools.wraps is critical — without it, decorated functions lose their __name__ and __doc__, which breaks introspection, logging, and Airflow task naming. In Airflow itself, the task decorator <strong>@task</strong> is exactly this pattern — it wraps your function to become a proper DAG task."
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     10. *ARGS / **KWARGS
+══════════════════════════════════════════════ -->
+<div class="divider reveal" id="s-args" data-label="*args / **kwargs">
+  <div class="div-num" style="color:var(--arg-c)">10</div>
+  <div class="div-content">
+    <div class="div-title" style="color:var(--arg-c)">*args & **kwargs</div>
+    <div class="div-sub">variable arguments · flexible functions · unpacking</div>
+  </div>
+  <div class="div-line"></div>
+</div>
+
+<div class="concept-card reveal">
+  <div class="card-accent-bar" style="background:var(--arg-c)"></div>
+  <div class="card-body">
+
+    <div class="kid-story" style="border-color:var(--arg-c)">
+      <div class="kid-emoji">🧳</div>
+      <div class="kid-text">
+        <strong>Kid story:</strong> You're packing a bag for a trip but don't know how many clothes you'll need. <strong>*args</strong> is like a <em>regular suitcase</em> — throw in as many items as you like, they're all packed as a tuple in order. <strong>**kwargs</strong> is like a <em>labelled packing organiser</em> — each item has a name tag: "this is the charger", "this is the book". You can add as many named items as you want.
+      </div>
+    </div>
+
+    <div class="args-grid">
+      <div class="args-card" style="border-color:rgba(38,166,154,.25)">
+        <h4 style="color:var(--arg-c)">*args</h4>
+        <p><strong>Positional arguments</strong> — any number, packed into a <strong>tuple</strong>. Use when you don't know how many values you'll receive, but order matters.</p>
+      </div>
+      <div class="args-card" style="border-color:rgba(255,167,38,.25)">
+        <h4 style="color:#ffa726">**kwargs</h4>
+        <p><strong>Keyword arguments</strong> — any number of name=value pairs, packed into a <strong>dict</strong>. Use when you want named flexibility — config options, optional parameters.</p>
+      </div>
+    </div>
+
+    <div class="code">
+<span class="cm"># *args → TUPLE of positional arguments</span>
+<span class="kw">def</span> <span class="fn">log_events</span>(*events):          <span class="cm"># any number of args</span>
+    <span class="fn">print</span>(<span class="fn">type</span>(events))            <span class="cm"># &lt;class 'tuple'&gt;</span>
+    <span class="kw">for</span> e <span class="kw">in</span> events:
+        <span class="fn">print</span>(<span class="str">f"EVENT: {e}"</span>)
+
+<span class="fn">log_events</span>(<span class="str">'start'</span>)
+<span class="fn">log_events</span>(<span class="str">'start'</span>, <span class="str">'transform'</span>, <span class="str">'load'</span>, <span class="str">'done'</span>)
+
+<span class="cm"># **kwargs → DICT of keyword arguments</span>
+<span class="kw">def</span> <span class="fn">create_pipeline</span>(**config):    <span class="cm"># any number of key=value</span>
+    <span class="fn">print</span>(<span class="fn">type</span>(config))            <span class="cm"># &lt;class 'dict'&gt;</span>
+    <span class="fn">print</span>(config)
+
+<span class="fn">create_pipeline</span>(source=<span class="str">'s3'</span>, target=<span class="str">'bigquery'</span>, batch_size=<span class="nm">10000</span>)
+
+<span class="cm"># ── COMBINED (order matters: normal, *args, **kwargs) ─────────</span>
+<span class="kw">def</span> <span class="fn">etl_job</span>(name, *tables, **options):
+    <span class="fn">print</span>(<span class="str">f"Job: {name}"</span>)          <span class="cm"># required arg</span>
+    <span class="fn">print</span>(<span class="str">f"Tables: {tables}"</span>)     <span class="cm"># tuple of extras</span>
+    <span class="fn">print</span>(<span class="str">f"Options: {options}"</span>)   <span class="cm"># dict of named settings</span>
+
+<span class="fn">etl_job</span>(<span class="str">'daily_load'</span>, <span class="str">'orders'</span>, <span class="str">'customers'</span>, timeout=<span class="nm">60</span>, dry_run=<span class="kw">True</span>)
+
+<span class="cm"># ── UNPACKING with * and ** ───────────────────────────────────</span>
+<span class="kw">tables</span>  = [<span class="str">'orders'</span>, <span class="str">'customers'</span>, <span class="str">'products'</span>]
+<span class="kw">options</span> = {<span class="str">'timeout'</span>: <span class="nm">60</span>, <span class="str">'retries'</span>: <span class="nm">3</span>}
+
+<span class="fn">etl_job</span>(<span class="str">'daily'</span>, *tables, **options)   <span class="cm"># spread list + dict into args</span></div>
+
+    <div class="senior-box" style="background:rgba(38,166,154,.05);border:1px solid rgba(38,166,154,.18)">
+      <div class="senior-label" style="color:var(--arg-c)">🏭 Senior DE Answer <span class="badge">say this in interview</span></div>
+      <div class="senior-quote">
+        "*args and **kwargs are how I write <strong>flexible, future-proof pipeline functions</strong>. When building a generic executor that wraps different operators, I pass **kwargs through so every specific operator can receive its own config without the executor needing to know about them. It's the <strong>pass-through pattern</strong>. The other critical use: decorators — my timer and retry decorators use <code>wrapper(*args, **kwargs)</code> so they can wrap ANY function regardless of its signature. The star unpacking operator is equally powerful — <strong>merging configs with {**default, **override}</strong>, or spreading a list into function arguments when you've built the argument list dynamically. If you see **{} spread syntax in Python, it's kwargs unpacking — and it's how Airflow's <code>provide_context=True</code> used to work before TaskFlow API."
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     QUICK REFERENCE CHEATSHEET
+══════════════════════════════════════════════ -->
+<div class="divider reveal" style="margin-top:70px">
+  <div class="div-num" style="opacity:.1">⚡</div>
+  <div class="div-content">
+    <div class="div-title" style="background:linear-gradient(90deg,#ff7043,#ffa726,#26c6da,#ab47bc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Quick Reference — Everything at a Glance</div>
+    <div class="div-sub">one table to rule them all</div>
+  </div>
+  <div class="div-line"></div>
+</div>
+
+<div class="concept-card reveal" style="margin-bottom:0">
+  <div class="card-accent-bar" style="background:linear-gradient(90deg,#ff7043,#ffa726,#26c6da,#ab47bc,#66bb6a,#ef5350,#42a5f5,#ec407a,#8d6e63,#26a69a)"></div>
+  <div class="card-body">
+    <table class="cmp-table">
+      <thead>
+        <tr><th>Concept</th><th>Kid Analogy</th><th>Syntax</th><th>Returns</th><th>Lazy?</th><th>Senior DE use</th></tr>
+      </thead>
+      <tbody>
+        <tr><td style="color:var(--map-c)">map()</td><td>Lemon machine</td><td class="mono">map(fn, iter)</td><td>map object</td><td class="yes">✓</td><td>Column transforms, type casting</td></tr>
+        <tr><td style="color:var(--iter-c)">iterator</td><td>Bookmark in book</td><td class="mono">iter() / next()</td><td>one item</td><td class="yes">✓</td><td>Stream large files, DB cursors</td></tr>
+        <tr><td style="color:var(--gen-c)">generator</td><td>Vending machine</td><td class="mono">yield</td><td>generator</td><td class="yes">✓</td><td>Chunked ETL, infinite streams</td></tr>
+        <tr><td style="color:var(--comp-c)">list comp</td><td>Lemonade factory</td><td class="mono">[x for x in …]</td><td>list</td><td class="no">✗</td><td>Quick transforms, readable</td></tr>
+        <tr><td style="color:var(--comp-c)">gen expr</td><td>Lemonade machine</td><td class="mono">(x for x in …)</td><td>generator</td><td class="yes">✓</td><td>Large data, lazy list comp</td></tr>
+        <tr><td style="color:var(--zip-c)">zip()</td><td>Pairing kids</td><td class="mono">zip(a, b)</td><td>zip object</td><td class="yes">✓</td><td>dict(zip(cols,vals)), merge rows</td></tr>
+        <tr><td style="color:var(--enum-c)">enumerate()</td><td>Numbered wristbands</td><td class="mono">enumerate(iter)</td><td>enumerate obj</td><td class="yes">✓</td><td>Progress logging, row indexing</td></tr>
+        <tr><td style="color:var(--filter-c)">filter()</td><td>Sieve/strainer</td><td class="mono">filter(fn, iter)</td><td>filter object</td><td class="yes">✓</td><td>Remove nulls, WHERE clause</td></tr>
+        <tr><td style="color:var(--reduce-c)">reduce()</td><td>Snowball rolling</td><td class="mono">reduce(fn, iter)</td><td>single value</td><td class="no">✗</td><td>Merge configs, aggregate</td></tr>
+        <tr><td style="color:var(--dec-c)">decorator</td><td>Gift wrapping</td><td class="mono">@decorator</td><td>wrapped fn</td><td>—</td><td>Retry, timer, validate, auth</td></tr>
+        <tr><td style="color:var(--arg-c)">*args</td><td>Regular suitcase</td><td class="mono">def fn(*args)</td><td>tuple</td><td>—</td><td>Flexible functions, decorators</td></tr>
+        <tr><td style="color:var(--arg-c)">**kwargs</td><td>Labelled organiser</td><td class="mono">def fn(**kw)</td><td>dict</td><td>—</td><td>Config pass-through, APIs</td></tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:20px;background:#06060a;border:1px solid var(--border);border-radius:12px;padding:18px 20px;">
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px">The interview-winning mental model</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div style="font-size:.83rem;color:#b8b8d8;line-height:1.7;padding:12px;background:rgba(255,255,255,.02);border-radius:8px;border:1px solid var(--border)">
+          <strong style="color:var(--iter-c)">Lazy (compute on demand):</strong><br>
+          map, filter, zip, enumerate, generator, generator expression<br>
+          → Use for large datasets
+        </div>
+        <div style="font-size:.83rem;color:#b8b8d8;line-height:1.7;padding:12px;background:rgba(255,255,255,.02);border-radius:8px;border:1px solid var(--border)">
+          <strong style="color:var(--reduce-c)">Eager (compute immediately):</strong><br>
+          list comprehension, set comp, dict comp, reduce, list()<br>
+          → Use when you need all results now
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end .page -->
+
+<script>
+// ─── SCROLL REVEAL ───────────────────────────────────────────
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('vis'); io.unobserve(e.target); }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal, .divider, .concept-card').forEach(el => io.observe(el));
+
+// ─── NAV DOTS ────────────────────────────────────────────────
+const sections = ['s-map','s-iter','s-gen','s-comp','s-zip','s-enum','s-filter','s-reduce','s-dec','s-args'];
+const colors   = ['#ff7043','#26c6da','#ab47bc','#66bb6a','#ffa726','#ef5350','#42a5f5','#ec407a','#8d6e63','#26a69a'];
+const navDots  = document.getElementById('navDots');
+sections.forEach((id, i) => {
+  const btn = document.createElement('button');
+  btn.className = 'nav-dot';
+  btn.title = id.replace('s-','');
+  btn.onclick = () => document.getElementById(id).scrollIntoView({ behavior:'smooth' });
+  navDots.appendChild(btn);
+});
+window.addEventListener('scroll', () => {
+  const scrollY = window.scrollY + window.innerHeight * 0.4;
+  sections.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const dot = navDots.children[i];
+    if (el.offsetTop <= scrollY && el.offsetTop + 600 > scrollY) {
+      dot.style.background = colors[i];
+      dot.classList.add('active');
+    } else {
+      dot.style.background = '';
+      dot.classList.remove('active');
+    }
+  });
+});
+
+// ─── MEMORY BARS (trigger on scroll) ─────────────────────────
+const barTriggered = {list:false};
+const barObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting && !barTriggered.list) {
+      barTriggered.list = true;
+      setTimeout(()=>{ document.getElementById('bar-list').style.width='88%'; },100);
+      setTimeout(()=>{ document.getElementById('bar-gen').style.width='0.8%'; },200);
+      setTimeout(()=>{ document.getElementById('bar-map').style.width='0.05%'; },300);
+    }
+  });
+}, { threshold: 0.3 });
+const barEl = document.getElementById('bar-list');
+if (barEl) barObs.observe(barEl.closest('.mem-visual'));
+
+// ─── MAP DEMO ─────────────────────────────────────────────────
+function mapDemo(inputs, fn, label) {
+  document.getElementById('map-fn-label').textContent = label;
+  const inp = document.getElementById('map-input');
+  const out = document.getElementById('map-output');
+  inp.innerHTML = '';  out.innerHTML = '';
+  inputs.forEach((v,i) => {
+    const t = document.createElement('div');
+    t.className = 'tok tok-in';
+    t.textContent = String(v).trim();
+    inp.appendChild(t);
+    setTimeout(() => {
+      inp.children[i]?.classList.add('pop');
+      const o = document.createElement('div');
+      o.className = 'tok tok-out pop';
+      o.textContent = String(fn(v));
+      out.appendChild(o);
+    }, i * 240);
+  });
+}
+mapDemo([100,200,350,500], x=>+(x*1.18).toFixed(1), 'lambda p: p*1.18 (18% GST)');
+
+// ─── FILTER DEMO ─────────────────────────────────────────────
+function filterDemo(inputs, fn, label) {
+  document.getElementById('filter-fn-lbl').textContent = label;
+  const out = document.getElementById('filter-output');
+  out.innerHTML = '';
+  inputs.forEach((v,i) => {
+    setTimeout(() => {
+      if (fn(v)) {
+        const o = document.createElement('div');
+        o.className = 'tok tok-out pop';
+        o.textContent = String(v);
+        out.appendChild(o);
+      }
+    }, i * 180);
+  });
+}
+
+// ─── ITERATOR DEMO ────────────────────────────────────────────
+const iterData = [10,20,30,40,50,60,70,80];
+let iterPos = 0;
+function buildIter() {
+  const c = document.getElementById('iter-items');
+  if (!c) return;
+  c.innerHTML = '';
+  iterData.forEach((v,i) => {
+    const d = document.createElement('div');
+    d.className = 'iter-item waiting';
+    d.id = `iter-${i}`;
+    d.textContent = v;
+    c.appendChild(d);
+  });
+}
+function iterNext() {
+  if (iterPos >= iterData.length) {
+    document.getElementById('iter-status').innerHTML =
+      'Iterator position: <span>DONE — StopIteration raised! ⛔</span>';
+    return;
+  }
+  if (iterPos > 0) {
+    const prev = document.getElementById(`iter-${iterPos-1}`);
+    if (prev) { prev.className = 'iter-item consumed'; prev.innerHTML = iterData[iterPos-1]+'<span class="check">✓</span>'; }
+  }
+  const cur = document.getElementById(`iter-${iterPos}`);
+  if (cur) cur.className = 'iter-item current';
+  document.getElementById('iter-status').innerHTML =
+    `Iterator position: item <span>${iterPos+1}</span> of ${iterData.length} &nbsp;|&nbsp; <code style="color:var(--iter-c)">next()</code> returned: <span>${iterData[iterPos]}</span>`;
+  iterPos++;
+}
+function iterReset() {
+  iterPos = 0;
+  buildIter();
+  document.getElementById('iter-status').innerHTML =
+    `Iterator position: item <span>0</span> of ${iterData.length} &nbsp;|&nbsp; Call <code style="color:var(--iter-c)">next()</code> to advance →`;
+}
+buildIter();
+
+// ─── GENERATOR TAPE ──────────────────────────────────────────
+const genData = [0,2,4,6,8,10,12,14,16,18];
+let genPos = 0;
+function buildGen() {
+  const c = document.getElementById('gen-tape');
+  if (!c) return;
+  c.innerHTML = '';
+  genData.forEach((v,i) => {
+    const d = document.createElement('div');
+    d.className = 'tape-item hidden';
+    d.id = `gen-${i}`;
+    d.textContent = v;
+    c.appendChild(d);
+  });
+  const dots = document.createElement('div');
+  dots.className = 'tape-dots';
+  dots.textContent = '···';
+  dots.id = 'gen-dots';
+  c.appendChild(dots);
+}
+function genNext() {
+  if (genPos >= genData.length) {
+    document.getElementById('gen-status').textContent = 'StopIteration — generator exhausted!';
+    return;
+  }
+  const el = document.getElementById(`gen-${genPos}`);
+  if (el) { el.className = 'tape-item revealed'; }
+  genPos++;
+  document.getElementById('gen-status').textContent = `items revealed: ${genPos} / ${genData.length}`;
+  if (genPos >= genData.length) {
+    const dots = document.getElementById('gen-dots');
+    if (dots) dots.style.opacity = '0.2';
+  }
+}
+function genReset() {
+  genPos = 0;
+  buildGen();
+  document.getElementById('gen-status').textContent = `items revealed: 0 / ${genData.length}`;
+}
+buildGen();
+
+// smooth scroll for pills
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+</body>
+</html>
